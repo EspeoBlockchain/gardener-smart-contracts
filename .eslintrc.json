@@ -1,0 +1,6 @@
+{
+    "extends": "airbnb-base",
+    "globals": {
+        "artifacts": true
+    }
+}
