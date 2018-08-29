@@ -1,0 +1,14 @@
+{
+  "name": "oracle-sm",
+  "version": "0.0.1",
+  "description": "Oracle smart contracts for Ethereum network",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "truffle test"
+  },
+  "author": "Krzysztof Wędrowicz",
+  "license": "ISC"
+}
