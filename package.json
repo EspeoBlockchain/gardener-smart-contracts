@@ -7,12 +7,14 @@
     "test": "test"
   },
   "scripts": {
-    "lint": "solium --dir contracts && eslint migrations/ test/",
+    "lint": "solium --dir contracts && eslint --fix migrations/ test/",
     "test": "truffle test"
   },
   "author": "Krzysztof Wędrowicz",
   "license": "ISC",
   "devDependencies": {
+    "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1",
     "eslint": "^5.4.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.14.0",
@@ -20,6 +22,7 @@
     "solium": "^1.1.8"
   },
   "dependencies": {
+    "lodash": "^4.17.10",
     "openzeppelin-solidity": "1.12.0"
   }
 }

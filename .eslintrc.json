@@ -1,6 +1,13 @@
 {
     "extends": "airbnb-base",
     "globals": {
-        "artifacts": true
+        "artifacts": true,
+        "contract": true,
+        "web3": true,
+        "assert": true,
+        "it": true,
+        "before": true,
+        "beforeEach": true,
+        "describe": true
     }
 }
