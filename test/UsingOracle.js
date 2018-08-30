@@ -79,6 +79,6 @@ contract('UsingOracle', (accounts) => {
     const transaction2 = sut.instance.__callback(id, '1'); // eslint-disable-line no-underscore-dangle
 
     // then
-    assert.isRejected(transaction2);
+    return assert.isRejected(transaction2);
   });
 });
