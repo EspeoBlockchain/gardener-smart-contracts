@@ -6,9 +6,12 @@ import "./UsingOracleI.sol";
 contract Oracle {
     address public trustedServer;
 
+    uint deadline = now + 2 years;
+
     mapping(bytes32 => address) pendingRequests;
 
     event DataRequested(bytes32 id, string url);
+    event DelayedDataRequested(bytes32 id, string url, uint delay);
     event RequestFulfilled(bytes32 id, string value);
 
     constructor(address _trustedServer) public {
@@ -19,6 +22,14 @@ contract Oracle {
         id = keccak256(abi.encodePacked(_url, msg.sender, now));
         pendingRequests[id] = msg.sender;
         emit DataRequested(id, _url);
+    }
+
+    function delayedRequest(string _url, uint _delay) public returns(bytes32 id) {
+        require(_delay <= 2 years, "Invalid request delay");
+        
+        id = keccak256(abi.encodePacked(_url, msg.sender, now + _delay));
+        pendingRequests[id] = msg.sender;
+        emit DelayedDataRequested(id, _url, _delay);
     }
 
     function fillRequest(bytes32 _id, string _value) external onlyFromTrustedServer {

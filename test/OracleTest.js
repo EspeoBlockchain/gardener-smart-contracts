@@ -107,4 +107,32 @@ contract('Oracle', (accounts) => {
     // then
     return assert.isRejected(transaction2, EVMRevert);
   });
+
+  it('should emit DataRequested event, when accepting request with given proper delay time', async () => {
+    // given
+    const url = 'someurl.example.com';
+    const delay = 10;
+
+    // when
+    const transaction = await sut.instance.delayedRequest(url, delay);
+    const events = transaction.logs;
+
+    // then
+    assert.equal(events.length, 1, 'Wrong number of events');
+    assert.equal(events[0].event, 'DelayedDataRequested', 'Event name mismatched');
+    assert.equal(events[0].args.url, url, 'Passed wrong event');
+    assert.notEqual(events[0].args.id, '0x0000000000000000000000000000000000000000000000000000000000000000', 'Request id is zero');
+  });
+
+  it('should revert DelayedDataRequested event when given delay time is at least 2 years', async () => {
+    // given
+    const url = 'someurl.example.com';
+    const delay = 90000000;
+
+    // when
+    const transaction = await sut.instance.delayedRequest(url, delay);
+
+    // then
+    return assert.isRejected(transaction, EVMRevert);
+  });
 });
