@@ -1,4 +1,5 @@
 const { assert, EVMRevert, getEvents } = require('./utils');
+const timeController = require('./utils/timeController');
 
 const Oracle = artifacts.require('Oracle');
 const UsingOracle = artifacts.require('UsingOracle');
@@ -111,10 +112,11 @@ contract('Oracle', (accounts) => {
   it('should emit DataRequested event, when accepting request with given proper delay time', async () => {
     // given
     const url = 'someurl.example.com';
-    const delay = 10;
+    const delayTime = 10;
 
     // when
-    const transaction = await sut.instance.delayedRequest(url, delay);
+    timeController.addSeconds(delayTime);
+    const transaction = await sut.instance.delayedRequest(url, delayTime);
     const events = transaction.logs;
 
     // then
@@ -127,10 +129,10 @@ contract('Oracle', (accounts) => {
   it('should revert DelayedDataRequested event when given delay time is at least 2 years', async () => {
     // given
     const url = 'someurl.example.com';
-    const delay = 90000000;
+    const exceededDelayTime = 90000000;
 
     // when
-    const transaction = await sut.instance.delayedRequest(url, delay);
+    const transaction = sut.instance.delayedRequest(url, exceededDelayTime);
 
     // then
     return assert.isRejected(transaction, EVMRevert);
