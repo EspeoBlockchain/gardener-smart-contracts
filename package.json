@@ -8,7 +8,7 @@
   },
   "scripts": {
     "lint": "solium --dir contracts && eslint --fix migrations/ test/",
-    "test": "truffle test",
+    "test": "truffle test --network develop",
     "coverage": "solidity-coverage"
   },
   "author": "Krzysztof Wędrowicz",
