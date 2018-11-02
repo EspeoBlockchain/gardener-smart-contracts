@@ -4,17 +4,19 @@ import "./UsingOracleI.sol";
 
 
 contract Oracle {
-    address public trustedServer;
-
+    
     struct Request { 
         address requestAddress;  
-        uint validFrom;
-        uint delay;  
+        uint validFrom;  
     }
+    
+    address public trustedServer;
 
-    uint constant LIMIT_DATE = 1541150945;
-
-    bytes32[] public requests;
+    /* This uint is a date written in unix timestamp as a limit, 
+    when delay is bigger then we consider uint as timestamp, otherwise we take delay as a second.
+    Limit date is 2018/01/01 00:00:00.
+    */ 
+    uint constant LIMIT_DATE = 1514764800;
 
     mapping(bytes32 => Request) pendingRequests;
 
@@ -30,35 +32,29 @@ contract Oracle {
         id = keccak256(abi.encodePacked(_url, msg.sender, now));
         pendingRequests[id].requestAddress = msg.sender;
         pendingRequests[id].validFrom = now;
-        pendingRequests[id].delay = 0;
-        requests.push(id);
         emit DataRequested(id, _url);
     }
 
     function delayedRequest(string _url, uint _delay) public returns(bytes32 id) {
         if (_delay > LIMIT_DATE) {
-            require(_delay <= 4102444800, "Invalid request timestamp delay");
+            require(_delay - now <= 2 years, "Invalid request timestamp delay");
             uint newNow = _delay;
             id = keccak256(abi.encodePacked(_url, msg.sender, newNow));
             pendingRequests[id].requestAddress = msg.sender;
             pendingRequests[id].validFrom = newNow;
-            pendingRequests[id].delay = 0;
-            requests.push(id);
             emit DelayedDataRequested(id, _url, newNow);
         } else {
             require(_delay <= 2 years, "Invalid request delay");
             id = keccak256(abi.encodePacked(_url, msg.sender, _delay, now));
             pendingRequests[id].requestAddress = msg.sender;
             pendingRequests[id].validFrom = now;
-            pendingRequests[id].delay = _delay;
-            requests.push(id);
             emit DelayedDataRequested(id, _url, _delay);
         }
     }
 
     function fillRequest(bytes32 _id, string _value) external onlyFromTrustedServer {
         require(pendingRequests[_id].requestAddress != address(0), "Invalid request id");
-
+        require(pendingRequests[_id].validFrom >= now, "Invalid timestamp");
         address callbackContract = pendingRequests[_id].requestAddress;
         delete pendingRequests[_id];
 
