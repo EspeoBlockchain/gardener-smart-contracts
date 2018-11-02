@@ -9,7 +9,7 @@ contract Oracle {
     mapping(bytes32 => address) pendingRequests;
 
     event DataRequested(bytes32 id, string url);
-    event RequestFulfilled(bytes32 id, string value);
+    event RequestFulfilled(bytes32 id, string value, uint errorCode);
 
     constructor(address _trustedServer) public {
         trustedServer = _trustedServer;
@@ -21,15 +21,15 @@ contract Oracle {
         emit DataRequested(id, _url);
     }
 
-    function fillRequest(bytes32 _id, string _value) external onlyFromTrustedServer {
+    function fillRequest(bytes32 _id, string _value, uint _errorCode) external onlyFromTrustedServer {
         require(pendingRequests[_id] != address(0), "Invalid request id");
 
         address callbackContract = pendingRequests[_id];
         delete pendingRequests[_id];
 
-        UsingOracleI(callbackContract).__callback(_id, _value);
+        UsingOracleI(callbackContract).__callback(_id, _value, _errorCode);
 
-        emit RequestFulfilled(_id, _value);
+        emit RequestFulfilled(_id, _value, _errorCode);
     }
 
     modifier onlyFromTrustedServer() {
