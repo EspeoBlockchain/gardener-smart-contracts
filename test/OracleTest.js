@@ -154,7 +154,7 @@ contract('Oracle', (accounts) => {
     assert.notEqual(events[0].args.id, '0x0000000000000000000000000000000000000000000000000000000000000000', 'Request id is zero');
   });
 
-  it('should revert DelayedDataRequested event when given delay time is at least 2 years as timestamp', async () => {
+  it('should revert DelayedDataRequested event when given delay timestamp is unreachable', async () => {
     // given
     const url = 'someurl.example.com';
     const exceededDelayTimestamp = 4102444801;
