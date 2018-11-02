@@ -1,5 +1,4 @@
 const { assert, EVMRevert, getEvents } = require('./utils');
-const timeController = require('./utils/timeController');
 
 const Oracle = artifacts.require('Oracle');
 const UsingOracle = artifacts.require('UsingOracle');
@@ -115,10 +114,8 @@ contract('Oracle', (accounts) => {
     const delayTime = 10;
 
     // when
-    timeController.addSeconds(delayTime);
     const transaction = await sut.instance.delayedRequest(url, delayTime);
     const events = transaction.logs;
-
     // then
     assert.equal(events.length, 1, 'Wrong number of events');
     assert.equal(events[0].event, 'DelayedDataRequested', 'Event name mismatched');
