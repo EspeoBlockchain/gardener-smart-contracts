@@ -138,7 +138,7 @@ contract('Oracle', (accounts) => {
   it('should emit DelayedDataRequested event, when accepting request with given proper delay time as timestamp', async () => {
     // given
     const url = 'someurl.example.com';
-    const delayTimestamp = 1577836800;
+    const delayTimestamp = 1577836800; // 2020/01/01 00:00:00 written in unix timestamp.
 
     // when
     const transaction = await sut.instance.delayedRequest(url, delayTimestamp);
@@ -154,7 +154,7 @@ contract('Oracle', (accounts) => {
   it('should revert DelayedDataRequested event when given delay timestamp is unreachable', async () => {
     // given
     const url = 'someurl.example.com';
-    const exceededDelayTimestamp = 4102444801;
+    const exceededDelayTimestamp = 4102444801; // 2100/01/01 00:00:00 written in unix timestamp.
 
     // when
     const transaction = sut.instance.delayedRequest(url, exceededDelayTimestamp);
