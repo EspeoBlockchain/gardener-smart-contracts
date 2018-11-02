@@ -6,9 +6,17 @@ import "./UsingOracleI.sol";
 contract Oracle {
     address public trustedServer;
 
-    uint deadline = now + 2 years;
+    struct Request { 
+        address requestAddress;  
+        uint validFrom;
+        uint delay;  
+    }
 
-    mapping(bytes32 => address) pendingRequests;
+    uint constant LIMIT_DATE = 1541150945;
+
+    bytes32[] public requests;
+
+    mapping(bytes32 => Request) pendingRequests;
 
     event DataRequested(bytes32 id, string url);
     event DelayedDataRequested(bytes32 id, string url, uint delay);
@@ -20,22 +28,38 @@ contract Oracle {
 
     function request(string _url) public returns(bytes32 id) {
         id = keccak256(abi.encodePacked(_url, msg.sender, now));
-        pendingRequests[id] = msg.sender;
+        pendingRequests[id].requestAddress = msg.sender;
+        pendingRequests[id].validFrom = now;
+        pendingRequests[id].delay = 0;
+        requests.push(id);
         emit DataRequested(id, _url);
     }
 
     function delayedRequest(string _url, uint _delay) public returns(bytes32 id) {
-        require(_delay <= 2 years, "Invalid request delay");
-        
-        id = keccak256(abi.encodePacked(_url, msg.sender, now + _delay));
-        pendingRequests[id] = msg.sender;
-        emit DelayedDataRequested(id, _url, _delay);
+        if (_delay > LIMIT_DATE) {
+            require(_delay <= 4102444800, "Invalid request timestamp delay");
+            uint newNow = _delay;
+            id = keccak256(abi.encodePacked(_url, msg.sender, newNow));
+            pendingRequests[id].requestAddress = msg.sender;
+            pendingRequests[id].validFrom = newNow;
+            pendingRequests[id].delay = 0;
+            requests.push(id);
+            emit DelayedDataRequested(id, _url, newNow);
+        } else {
+            require(_delay <= 2 years, "Invalid request delay");
+            id = keccak256(abi.encodePacked(_url, msg.sender, _delay, now));
+            pendingRequests[id].requestAddress = msg.sender;
+            pendingRequests[id].validFrom = now;
+            pendingRequests[id].delay = _delay;
+            requests.push(id);
+            emit DelayedDataRequested(id, _url, _delay);
+        }
     }
 
     function fillRequest(bytes32 _id, string _value) external onlyFromTrustedServer {
-        require(pendingRequests[_id] != address(0), "Invalid request id");
+        require(pendingRequests[_id].requestAddress != address(0), "Invalid request id");
 
-        address callbackContract = pendingRequests[_id];
+        address callbackContract = pendingRequests[_id].requestAddress;
         delete pendingRequests[_id];
 
         UsingOracleI(callbackContract).__callback(_id, _value);

@@ -20,16 +20,6 @@ module.exports = (() => {
 
   const currentTimestamp = () => new web3.BigNumber(web3.eth.getBlock(web3.eth.blockNumber).timestamp);
 
-/** TODO 
- *  
-  const getEthTransactionTimestamp = txHash => {
-    let date = web3.eth.getTransaction(txHash).blockNumber;
-
-    let dateConverted = new Date(date * 1000);
-    
-  }
-*/
-
   return {
     addSeconds,
     addDays,

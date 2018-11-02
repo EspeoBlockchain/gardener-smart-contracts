@@ -109,7 +109,7 @@ contract('Oracle', (accounts) => {
     return assert.isRejected(transaction2, EVMRevert);
   });
 
-  it('should emit DataRequested event, when accepting request with given proper delay time', async () => {
+  it('should emit DelayedDataRequested event, when accepting request with given proper delay time in second', async () => {
     // given
     const url = 'someurl.example.com';
     const delayTime = 10;
@@ -133,6 +133,34 @@ contract('Oracle', (accounts) => {
 
     // when
     const transaction = sut.instance.delayedRequest(url, exceededDelayTime);
+
+    // then
+    return assert.isRejected(transaction, EVMRevert);
+  });
+
+  it('should emit DelayedDataRequested event, when accepting request with given proper delay time as timestamp', async () => {
+    // given
+    const url = 'someurl.example.com';
+    const delayTimestamp = 1577836800;
+
+    // when
+    const transaction = await sut.instance.delayedRequest(url, delayTimestamp);
+    const events = transaction.logs;
+
+    // then
+    assert.equal(events.length, 1, 'Wrong number of events');
+    assert.equal(events[0].event, 'DelayedDataRequested', 'Event name mismatched');
+    assert.equal(events[0].args.url, url, 'Passed wrong event');
+    assert.notEqual(events[0].args.id, '0x0000000000000000000000000000000000000000000000000000000000000000', 'Request id is zero');
+  });
+
+  it('should revert DelayedDataRequested event when given delay time is at least 2 years as timestamp', async () => {
+    // given
+    const url = 'someurl.example.com';
+    const exceededDelayTimestamp = 4102444801;
+
+    // when
+    const transaction = sut.instance.delayedRequest(url, exceededDelayTimestamp);
 
     // then
     return assert.isRejected(transaction, EVMRevert);
