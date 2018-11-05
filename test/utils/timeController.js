@@ -18,7 +18,8 @@ module.exports = (() => {
 
   const addDays = days => addSeconds(days * 24 * 60 * 60);
 
-  const currentTimestamp = () => new web3.BigNumber(web3.eth.getBlock(web3.eth.blockNumber).timestamp);
+  const currentTimestamp = () => new web3.BigNumber(web3
+    .eth.getBlock(web3.eth.blockNumber).timestamp);
 
   return {
     addSeconds,
