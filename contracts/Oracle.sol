@@ -52,9 +52,7 @@ contract Oracle {
         }
     }
 
-    function fillRequest(bytes32 _id, string _value) external onlyFromTrustedServer {
-        require(pendingRequests[_id].requestAddress != address(0), "Invalid request id");
-        require(pendingRequests[_id].validFrom >= now, "Invalid timestamp");
+    function fillRequest(bytes32 _id, string _value) external onlyFromTrustedServer onlyIfValidRequestId(_id) onlyIfValidTimestamp(_id) {   
         address callbackContract = pendingRequests[_id].requestAddress;
         delete pendingRequests[_id];
 
@@ -65,6 +63,16 @@ contract Oracle {
 
     modifier onlyFromTrustedServer() {
         require(msg.sender == trustedServer, "Sender address doesn't equal trusted server");
+        _;
+    }
+
+    modifier onlyIfValidRequestId(bytes32 _id) {
+        require(pendingRequests[_id].requestAddress != address(0), "Invalid request id");
+        _;
+    }
+
+    modifier onlyIfValidTimestamp(bytes32 _id) {
+        require(pendingRequests[_id].validFrom >= now, "Invalid timestamp");
         _;
     }
 }
