@@ -72,7 +72,7 @@ contract Oracle {
     }
 
     modifier onlyIfValidTimestamp(bytes32 _id) {
-        require(pendingRequests[_id].validFrom <= now, "Invalid timestamp");
+        require(pendingRequests[_id].validFrom <= now, "Invalid request timestamp");
         _;
     }
 }
