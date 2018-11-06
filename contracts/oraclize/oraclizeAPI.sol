@@ -1,3 +1,5 @@
+/* solium-disable */
+
 // <ORACLIZE_API>
 // Release targetted at solc 0.4.25 to silence compiler warning/error messages, compatible down to 0.4.22
 /*

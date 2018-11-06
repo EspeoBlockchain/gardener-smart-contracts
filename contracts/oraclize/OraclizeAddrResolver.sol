@@ -15,8 +15,7 @@ contract OraclizeAddrResolver {
         owner = msg.sender;
     }
 
-    function changeOwner(address newowner) public {
-        if (msg.sender != owner) throw;
+    function changeOwner(address newowner) public onlyOwner {
         owner = newowner;
     }
 
@@ -24,9 +23,13 @@ contract OraclizeAddrResolver {
         return addr;
     }
 
-    function setAddr(address newaddr) public {
-        if (msg.sender != owner) throw;
+    function setAddr(address newaddr) public onlyOwner {
         addr = newaddr;
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only owner can change ownership");
+        _;
     }
 
 }

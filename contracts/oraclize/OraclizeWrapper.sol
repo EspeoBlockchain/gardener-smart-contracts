@@ -31,23 +31,29 @@ contract OraclizeWrapper is OraclizeI, UsingOracleI {
     }
 
     function query_withGasLimit(uint _timestamp, string _datasource, string _arg, uint _gaslimit) external payable returns (bytes32 _id) {
-        revert();
+        revert("Not implemented");
     }
 
     function query2(uint _timestamp, string _datasource, string _arg1, string _arg2) public payable returns (bytes32 _id) {
-        revert();
+        revert("Not implemented");
     }
 
-    function query2_withGasLimit(uint _timestamp, string _datasource, string _arg1, string _arg2, uint _gaslimit) external payable returns (bytes32 _id) {
-       revert();
+    function query2_withGasLimit(
+        uint _timestamp,
+        string _datasource,
+        string _arg1,
+        string _arg2,
+        uint _gaslimit
+    ) external payable returns (bytes32 _id) {
+        revert("Not implemented");
     }
 
     function queryN(uint _timestamp, string _datasource, bytes _argN) public payable returns (bytes32 _id) {
-        revert();
+        revert("Not implemented");
     }
 
     function queryN_withGasLimit(uint _timestamp, string _datasource, bytes _argN, uint _gaslimit) external payable returns (bytes32 _id) {
-        revert();
+        revert("Not implemented");
     }
 
     function getPrice(string _datasource) public returns (uint _dsprice) {
@@ -58,12 +64,12 @@ contract OraclizeWrapper is OraclizeI, UsingOracleI {
         return 0;
     }
     function setProofType(byte _proofType) external {
-        revert();
+        revert("Not implemented");
     }
     function setCustomGasPrice(uint _gasPrice) external {
-        revert();
+        revert("Not implemented");
     }
-    function randomDS_getSessionPubKeyHash() external constant returns(bytes32) {
-        return keccak256("a");
+    function randomDS_getSessionPubKeyHash() external view returns(bytes32) {
+        revert("Not implemented");
     }
 }

@@ -14,17 +14,17 @@ contract UsingOraclizeExampleContract is usingOraclize {
         OAR = OraclizeAddrResolverI(_oar);
     }
 
-    function __callback(bytes32 myid, string result) {
-        if (msg.sender != oraclize_cbAddress()) revert();
+    function __callback(bytes32 myid, string result) public {
+        require(msg.sender == oraclize_cbAddress(), "Only cbAddress can call __callback method");
         ETHUSD = result;
-        LogPriceUpdated(result);
+        emit LogPriceUpdated(result);
     }
 
     function updatePrice() public payable {
-        if (oraclize_getPrice("URL") > this.balance) {
-            LogNewOraclizeQuery("Oraclize query was NOT sent, please add some ETH to cover for the query fee");
+        if (oraclize_getPrice("URL") > address(this).balance) {
+            emit LogNewOraclizeQuery("Oraclize query was NOT sent, please add some ETH to cover for the query fee");
         } else {
-            LogNewOraclizeQuery("Oraclize query was sent, standing by for the answer..");
+            emit LogNewOraclizeQuery("Oraclize query was sent, standing by for the answer..");
             oraclize_query("URL", "json(https://api.pro.coinbase.com/products/ETH-USD/ticker).price");
         }
     }
