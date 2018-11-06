@@ -1,21 +1,33 @@
 pragma solidity ^0.4.24;
 
 import "./OraclizeI.sol";
+import "./UsingOraclizeI.sol";
 import "../OracleI.sol";
+import "../UsingOracleI.sol";
 
-contract OraclizeWrapper is OraclizeI {
+contract OraclizeWrapper is OraclizeI, UsingOracleI {
 
     OracleI public oracle;
 
+    mapping(bytes32 => address) requests;
+
     constructor(OracleI _oracle) public {
         oracle = _oracle;
-        cbAddress = oracle.trustedServer();
+        cbAddress = address(this);
+    }
+
+    function __callback(bytes32 _id, string _value, uint _errorCode) external {
+        address callbackAddress = requests[_id];
+        delete requests[_id];
+
+        UsingOraclizeI(callbackAddress).__callback(_id, _value);
     }
 
     function query(uint _timestamp, string _datasource, string _arg) external payable returns (bytes32 _id) {
         require(keccak256(abi.encodePacked(_datasource)) == keccak256(abi.encodePacked("URL")), "Only URL datasource supported");
 
-        return oracle.request(_arg);
+        _id = oracle.request(_arg);
+        requests[_id] = msg.sender;
     }
 
     function query_withGasLimit(uint _timestamp, string _datasource, string _arg, uint _gaslimit) external payable returns (bytes32 _id) {
@@ -50,5 +62,8 @@ contract OraclizeWrapper is OraclizeI {
     }
     function setCustomGasPrice(uint _gasPrice) external {
         revert();
+    }
+    function randomDS_getSessionPubKeyHash() external constant returns(bytes32) {
+        return keccak256("a");
     }
 }

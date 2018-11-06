@@ -11,20 +11,20 @@ contract OraclizeAddrResolver {
 
     address owner;
 
-    function OraclizeAddrResolver(){
+    constructor() public {
         owner = msg.sender;
     }
 
-    function changeOwner(address newowner){
+    function changeOwner(address newowner) public {
         if (msg.sender != owner) throw;
         owner = newowner;
     }
 
-    function getAddress() returns (address oaddr){
+    function getAddress() public view returns (address oaddr){
         return addr;
     }
 
-    function setAddr(address newaddr){
+    function setAddr(address newaddr) public {
         if (msg.sender != owner) throw;
         addr = newaddr;
     }
