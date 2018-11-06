@@ -23,6 +23,13 @@ contract UsingOracle {
         emit DataRequestedFromOracle(id, _url);
     }
 
+    function delayedRequest(string _url, uint _delay) public {
+        bytes32 id = oracle.delayedRequest(_url, _delay);
+        pendingRequests[id] = true;
+
+        emit DataRequestedFromOracle(id, _url);
+    }
+
     function __callback(bytes32 _id, string _value) external onlyFromOracle {
         require(pendingRequests[_id], "Invalid request id");
         delete pendingRequests[_id];

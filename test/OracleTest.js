@@ -1,4 +1,5 @@
 const { assert, EVMRevert, getEvents } = require('./utils');
+const timeController = require('./utils/timeController');
 
 const Oracle = artifacts.require('Oracle');
 const UsingOracle = artifacts.require('UsingOracle');
@@ -106,6 +107,27 @@ contract('Oracle', (accounts) => {
 
     // then
     return assert.isRejected(transaction2, EVMRevert);
+  });
+
+  it('should reject fulfilling already accepted reqeust for invalid timestamp', async () => {
+    // given
+    const url = 'someurl.example.com';
+    const delayInSeconds = 900;
+    const transaction = await sut.usingOracle.delayedRequest(url, delayInSeconds);
+    const { blockNumber } = transaction.receipt;
+    const events = await getEvents(
+      sut.instance,
+      { eventName: 'DelayedDataRequested', eventArgs: {} },
+      { fromBlock: blockNumber, toBlock: blockNumber },
+    );
+    const { id } = events[0];
+    timeController.addSeconds(delayInSeconds);
+
+    // when
+    const transaction1 = sut.instance.fillRequest(id, '2', { from: serverAddress });
+
+    // then
+    return assert.isRejected(transaction1, EVMRevert);
   });
 
   it('should emit DelayedDataRequested event, when accepting request with given proper delay time in second', async () => {
