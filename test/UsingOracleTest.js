@@ -54,7 +54,7 @@ contract('UsingOracle', (accounts) => {
     const id = await getRequestIdFromEvent(sut.instance, 'DataRequestedFromOracle', blockNumber);
 
     // when
-    const transaction2 = await sut.oracle.fillRequest(id, '1', { from: serverAddress });
+    const transaction2 = await sut.oracle.fillRequest(id, '1', 0, { from: serverAddress });
 
     // then
     const events = await getEvents(
@@ -76,7 +76,7 @@ contract('UsingOracle', (accounts) => {
     const id = await getRequestIdFromEvent(sut.instance, 'DataRequestedFromOracle', blockNumber);
 
     // when
-    const transaction2 = sut.instance.__callback(id, '1'); // eslint-disable-line no-underscore-dangle
+    const transaction2 = sut.instance.__callback(id, '1', 0); // eslint-disable-line no-underscore-dangle
 
     // then
     return assert.isRejected(transaction2);
