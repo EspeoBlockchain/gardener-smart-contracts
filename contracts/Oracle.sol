@@ -4,18 +4,18 @@ import "./UsingOracleI.sol";
 
 
 contract Oracle {
-    
-    struct Request { 
-        address requestAddress;  
-        uint validFrom;  
+
+    struct Request {
+        address requestAddress;
+        uint validFrom;
     }
-    
+
     address public trustedServer;
 
-    /* This uint is a date written in unix timestamp as a limit, 
+    /* This uint is a date written in unix timestamp as a limit,
     when delay is bigger then we consider uint as timestamp, otherwise we take delay as a second.
     Limit date is 2018/01/01 00:00:00.
-    */ 
+    */
     uint constant LIMIT_DATE = 1514764800;
 
     mapping(bytes32 => Request) pendingRequests;
@@ -52,7 +52,7 @@ contract Oracle {
         }
     }
 
-    function fillRequest(bytes32 _id, string _value) external onlyFromTrustedServer onlyIfValidRequestId(_id) onlyIfValidTimestamp(_id) {   
+    function fillRequest(bytes32 _id, string _value) external onlyFromTrustedServer onlyIfValidRequestId(_id) onlyIfValidTimestamp(_id) {
         address callbackContract = pendingRequests[_id].requestAddress;
         delete pendingRequests[_id];
 
@@ -72,7 +72,7 @@ contract Oracle {
     }
 
     modifier onlyIfValidTimestamp(bytes32 _id) {
-        require(pendingRequests[_id].validFrom >= now, "Invalid timestamp");
+        require(pendingRequests[_id].validFrom <= now, "Invalid timestamp");
         _;
     }
 }
