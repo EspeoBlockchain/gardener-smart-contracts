@@ -109,7 +109,7 @@ contract('Oracle', (accounts) => {
     return assert.isRejected(transaction2, EVMRevert);
   });
 
-  it('should reject fulfilling already accepted reqeust for invalid timestamp', async () => {
+  it('should emit DelayedDataRequested event when accepting reqeust for valid timestamp in seconds', async () => {
     // given
     const url = 'someurl.example.com';
     const delayInSeconds = 900;
@@ -122,6 +122,76 @@ contract('Oracle', (accounts) => {
     );
     const { id } = events[0];
     timeController.addSeconds(delayInSeconds);
+
+    // when
+    const transaction1 = await sut.instance.fillRequest(id, '2', { from: serverAddress });
+    const requestFulfilledEvents = transaction1.logs;
+
+    // then
+    assert.equal(requestFulfilledEvents.length, 1, 'Wrong number of events');
+    assert.equal(requestFulfilledEvents[0].event, 'RequestFulfilled', 'Event name mismatched');
+    assert.equal(requestFulfilledEvents[0].args.value, '2', 'Passed wrong value');
+    assert.notEqual(requestFulfilledEvents[0].args.id, '0x0000000000000000000000000000000000000000000000000000000000000000', 'Request id is zero');
+  });
+
+  it('should reject fulfill request for request id with invalid timestamp in seconds', async () => {
+    // given
+    const url = 'someurl.example.com';
+    const delayInSeconds = 1000;
+    const transaction = await sut.usingOracle.delayedRequest(url, delayInSeconds);
+    const { blockNumber } = transaction.receipt;
+    timeController.addSeconds(10);
+    const events = await getEvents(
+      sut.instance,
+      { eventName: 'DelayedDataRequested', eventArgs: {} },
+      { fromBlock: blockNumber, toBlock: blockNumber },
+    );
+    const { id } = events[0];
+
+    // when
+    const transaction1 = sut.instance.fillRequest(id, '2', { from: serverAddress });
+
+    // then
+    return assert.isRejected(transaction1, EVMRevert);
+  });
+
+  it('should emit RequestFullfilled event when fulfill request with valid delay as timestamp', async () => {
+    // given
+    const url = 'someurl.example.com';
+    const delayAsTimestamp = 1546300800; // 2020/01/01 as unix timestamp.
+    const transaction = await sut.usingOracle.delayedRequest(url, delayAsTimestamp);
+    const { blockNumber } = transaction.receipt;
+    timeController.addDays(100); // Adding 15 months from now.
+    const events = await getEvents(
+      sut.instance,
+      { eventName: 'DelayedDataRequested', eventArgs: {} },
+      { fromBlock: blockNumber, toBlock: blockNumber },
+    );
+    const { id } = events[0];
+
+    // when
+    const transaction1 = await sut.instance.fillRequest(id, '2', { from: serverAddress });
+    const requestFulfilledEvents = transaction1.logs;
+
+    // then
+    assert.equal(requestFulfilledEvents.length, 1, 'Wrong number of events');
+    assert.equal(requestFulfilledEvents[0].event, 'RequestFulfilled', 'Event name mismatched');
+    assert.equal(requestFulfilledEvents[0].args.value, '2', 'Passed wrong value');
+    assert.notEqual(requestFulfilledEvents[0].args.id, '0x0000000000000000000000000000000000000000000000000000000000000000', 'Request id is zero');
+  });
+
+  it('should reject fulfilling request for invalid request delay as timestamp', async () => {
+    // given
+    const url = 'someurl.example.com';
+    const delayInSeconds = 1577836802;
+    const transaction = await sut.usingOracle.delayedRequest(url, delayInSeconds);
+    const { blockNumber } = transaction.receipt;
+    const events = await getEvents(
+      sut.instance,
+      { eventName: 'DelayedDataRequested', eventArgs: {} },
+      { fromBlock: blockNumber, toBlock: blockNumber },
+    );
+    const { id } = events[0];
 
     // when
     const transaction1 = sut.instance.fillRequest(id, '2', { from: serverAddress });
