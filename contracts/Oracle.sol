@@ -22,7 +22,7 @@ contract Oracle {
 
     event DataRequested(bytes32 id, string url);
     event DelayedDataRequested(bytes32 id, string url, uint delay);
-    event RequestFulfilled(bytes32 id, string value);
+    event RequestFulfilled(bytes32 id, string value, uint errorCode);
 
     constructor(address _trustedServer) public {
         trustedServer = _trustedServer;
@@ -52,13 +52,14 @@ contract Oracle {
         }
     }
 
-    function fillRequest(bytes32 _id, string _value) external onlyFromTrustedServer onlyIfValidRequestId(_id) onlyIfValidTimestamp(_id) {
+    function fillRequest(bytes32 _id, string _value, uint _errorCode) external 
+    onlyFromTrustedServer onlyIfValidRequestId(_id) onlyIfValidTimestamp(_id) {
         address callbackContract = pendingRequests[_id].requestAddress;
         delete pendingRequests[_id];
 
-        UsingOracleI(callbackContract).__callback(_id, _value);
+        UsingOracleI(callbackContract).__callback(_id, _value, _errorCode);
 
-        emit RequestFulfilled(_id, _value);
+        emit RequestFulfilled(_id, _value, _errorCode);
     }
 
     modifier onlyFromTrustedServer() {

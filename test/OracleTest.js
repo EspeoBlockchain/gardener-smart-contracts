@@ -49,13 +49,38 @@ contract('Oracle', (accounts) => {
     const { id } = events[0];
 
     // when
-    const transaction2 = await sut.instance.fillRequest(id, '1', { from: serverAddress });
+    const transaction2 = await sut.instance.fillRequest(id, '1', 0, { from: serverAddress });
     const requestFulfilledEvents = transaction2.logs;
 
     // then
     assert.equal(requestFulfilledEvents.length, 1, 'Wrong number of events');
     assert.equal(requestFulfilledEvents[0].event, 'RequestFulfilled', 'Event name mismatched');
     assert.equal(requestFulfilledEvents[0].args.value, '1', 'Passed wrong value');
+    assert.equal(requestFulfilledEvents[0].args.errorCode, 0, 'Error passed');
+    assert.notEqual(requestFulfilledEvents[0].args.id, '0x0000000000000000000000000000000000000000000000000000000000000000', 'Request id is zero');
+  });
+
+  it('should emit RequestFulfilled event with non zero errorCode when invalid request sent', async () => {
+    // given
+    const url = 'invalidrequest';
+    const transaction1 = await sut.usingOracle.request(url);
+    const { blockNumber } = transaction1.receipt;
+    const events = await getEvents(
+      sut.instance,
+      { eventName: 'DataRequested', eventArgs: {} },
+      { fromBlock: blockNumber, toBlock: blockNumber },
+    );
+    const { id } = events[0];
+
+    // when
+    const transaction2 = await sut.instance.fillRequest(id, '', 1, { from: serverAddress });
+    const requestFulfilledEvents = transaction2.logs;
+
+    // then
+    assert.equal(requestFulfilledEvents.length, 1, 'Wrong number of events');
+    assert.equal(requestFulfilledEvents[0].event, 'RequestFulfilled', 'Event name mismatched');
+    assert.equal(requestFulfilledEvents[0].args.value, '', 'Value should be empty when errorCode is passed');
+    assert.equal(requestFulfilledEvents[0].args.errorCode, 1, 'Error should be passed');
     assert.notEqual(requestFulfilledEvents[0].args.id, '0x0000000000000000000000000000000000000000000000000000000000000000', 'Request id is zero');
   });
 
@@ -72,7 +97,7 @@ contract('Oracle', (accounts) => {
     const { id } = events[0];
 
     // when
-    const transaction2 = sut.instance.fillRequest(id, '1');
+    const transaction2 = sut.instance.fillRequest(id, '1', 0);
 
     // then
     return assert.isRejected(transaction2, EVMRevert);
@@ -83,7 +108,7 @@ contract('Oracle', (accounts) => {
     const randomId = web3.sha3('');
 
     // when
-    const transaction2 = sut.instance.fillRequest(randomId, '1');
+    const transaction2 = sut.instance.fillRequest(randomId, '1', 0);
 
     // then
     return assert.isRejected(transaction2, EVMRevert);
@@ -100,10 +125,10 @@ contract('Oracle', (accounts) => {
       { fromBlock: blockNumber, toBlock: blockNumber },
     );
     const { id } = events[0];
-    await sut.instance.fillRequest(id, '1', { from: serverAddress });
+    await sut.instance.fillRequest(id, '1', 0, { from: serverAddress });
 
     // when
-    const transaction2 = sut.instance.fillRequest(id, '2', { from: serverAddress });
+    const transaction2 = sut.instance.fillRequest(id, '2', 0, { from: serverAddress });
 
     // then
     return assert.isRejected(transaction2, EVMRevert);
@@ -124,7 +149,7 @@ contract('Oracle', (accounts) => {
     timeController.addSeconds(delayInSeconds);
 
     // when
-    const transaction1 = await sut.instance.fillRequest(id, '2', { from: serverAddress });
+    const transaction1 = await sut.instance.fillRequest(id, '2', 0, { from: serverAddress });
     const requestFulfilledEvents = transaction1.logs;
 
     // then
@@ -149,7 +174,7 @@ contract('Oracle', (accounts) => {
     const { id } = events[0];
 
     // when
-    const transaction1 = sut.instance.fillRequest(id, '2', { from: serverAddress });
+    const transaction1 = sut.instance.fillRequest(id, '2', 0, { from: serverAddress });
 
     // then
     return assert.isRejected(transaction1, EVMRevert);
@@ -170,7 +195,7 @@ contract('Oracle', (accounts) => {
     const { id } = events[0];
 
     // when
-    const transaction1 = await sut.instance.fillRequest(id, '2', { from: serverAddress });
+    const transaction1 = await sut.instance.fillRequest(id, '2', 0, { from: serverAddress });
     const requestFulfilledEvents = transaction1.logs;
 
     // then
@@ -194,7 +219,7 @@ contract('Oracle', (accounts) => {
     const { id } = events[0];
 
     // when
-    const transaction1 = sut.instance.fillRequest(id, '2', { from: serverAddress });
+    const transaction1 = sut.instance.fillRequest(id, '2', 0, { from: serverAddress });
 
     // then
     return assert.isRejected(transaction1, EVMRevert);
