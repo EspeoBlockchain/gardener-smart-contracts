@@ -45,9 +45,9 @@ contract Oracle {
             emit DelayedDataRequested(id, _url, newNow);
         } else {
             require(_delay <= 2 years, "Invalid request delay");
-            id = keccak256(abi.encodePacked(_url, msg.sender, _delay, now));
+            id = keccak256(abi.encodePacked(_url, msg.sender, now, _delay));
             pendingRequests[id].requestAddress = msg.sender;
-            pendingRequests[id].validFrom = now;
+            pendingRequests[id].validFrom = now + _delay;
             emit DelayedDataRequested(id, _url, _delay);
         }
     }
