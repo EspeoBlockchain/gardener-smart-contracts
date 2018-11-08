@@ -13,6 +13,7 @@ contract('UsingOraclizeExampleContract', (accounts) => {
   beforeEach(async () => {
     sut.oracle = await Oracle.new(serverAddress);
     sut.wrapper = await OraclizeWrapper.new(sut.oracle.address);
+    await sut.oracle.grantAccessToAddress(sut.wrapper.address);
     sut.oar = await OraclizeAddrResolver.new();
     await sut.oar.setAddr(sut.wrapper.address);
     sut.instance = await UsingOraclizeExampleContract.new(sut.oar.address);

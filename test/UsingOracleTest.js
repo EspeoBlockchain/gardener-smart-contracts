@@ -21,6 +21,7 @@ contract('UsingOracle', (accounts) => {
   beforeEach(async () => {
     sut.oracle = await Oracle.new(serverAddress);
     sut.instance = await UsingOracle.new(sut.oracle.address);
+    await sut.oracle.grantAccessToAddress(sut.instance.address);
   });
 
   it('should show oracle address', async () => {

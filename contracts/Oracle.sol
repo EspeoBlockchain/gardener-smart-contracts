@@ -1,9 +1,10 @@
 pragma solidity ^0.4.24;
 
 import "./UsingOracleI.sol";
+import "./auth/Authorizable.sol";
 
 
-contract Oracle {
+contract Oracle is Authorizable {
     address public trustedServer;
 
     mapping(bytes32 => address) pendingRequests;
@@ -15,7 +16,7 @@ contract Oracle {
         trustedServer = _trustedServer;
     }
 
-    function request(string _url) public returns(bytes32 id) {
+    function request(string _url) public onlyRole(AUTHORIZED_USER) returns(bytes32 id) {
         id = keccak256(abi.encodePacked(_url, msg.sender, now));
         pendingRequests[id] = msg.sender;
         emit DataRequested(id, _url);
