@@ -9,6 +9,7 @@ const Oracle = artifacts.require('Oracle');
 contract('UsingOraclizeExampleContract', (accounts) => {
   const sut = {};
   const serverAddress = accounts[1];
+  const notAServer = accounts[2];
 
   beforeEach(async () => {
     sut.oracle = await Oracle.new(serverAddress);
@@ -54,5 +55,24 @@ contract('UsingOraclizeExampleContract', (accounts) => {
     // then
     assert.equal(events2.length, 1, 'Wrong number of events');
     assert.equal(events2[0].price, '1', 'Invalid result');
+  });
+
+  it('should reject answer from address other than oracle callback', async () => {
+    // given
+    const transaction1 = await sut.instance.updatePrice();
+    const { blockNumber } = transaction1.receipt;
+    const events = await getEvents(
+      sut.oracle,
+      { eventName: 'DataRequested', eventArgs: {} },
+      { fromBlock: blockNumber, toBlock: blockNumber },
+    );
+    const { id } = events[0];
+
+    // when
+    // eslint-disable-next-line no-underscore-dangle
+    const transaction2 = sut.instance.__callback(id, '1', { from: notAServer });
+
+    // then
+    return assert.isRejected(transaction2);
   });
 });
