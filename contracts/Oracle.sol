@@ -21,7 +21,7 @@ contract Oracle {
     mapping(bytes32 => Request) pendingRequests;
 
     event DataRequested(bytes32 id, string url);
-    event DelayedDataRequested(bytes32 id, string url, uint delay);
+    event DelayedDataRequested(bytes32 id, string url, uint validFrom);
     event RequestFulfilled(bytes32 id, string value, uint errorCode);
 
     constructor(address _trustedServer) public {
@@ -38,21 +38,20 @@ contract Oracle {
     function delayedRequest(string _url, uint _delay) public returns(bytes32 id) {
         if (_delay > LIMIT_DATE) {
             require(_delay - now <= 2 years, "Invalid request timestamp delay");
-            uint newNow = _delay;
-            id = keccak256(abi.encodePacked(_url, msg.sender, newNow));
+            id = keccak256(abi.encodePacked(_url, msg.sender, _delay));
             pendingRequests[id].requestAddress = msg.sender;
-            pendingRequests[id].validFrom = newNow;
-            emit DelayedDataRequested(id, _url, newNow);
+            pendingRequests[id].validFrom = _delay;
+            emit DelayedDataRequested(id, _url, pendingRequests[id].validFrom);
         } else {
             require(_delay <= 2 years, "Invalid request delay");
             id = keccak256(abi.encodePacked(_url, msg.sender, now, _delay));
             pendingRequests[id].requestAddress = msg.sender;
             pendingRequests[id].validFrom = now + _delay;
-            emit DelayedDataRequested(id, _url, _delay);
+            emit DelayedDataRequested(id, _url, pendingRequests[id].validFrom);
         }
     }
 
-    function fillRequest(bytes32 _id, string _value, uint _errorCode) external 
+    function fillRequest(bytes32 _id, string _value, uint _errorCode) external
     onlyFromTrustedServer onlyIfValidRequestId(_id) onlyIfValidTimestamp(_id) {
         address callbackContract = pendingRequests[_id].requestAddress;
         delete pendingRequests[_id];
