@@ -63,12 +63,15 @@ contract OraclizeWrapper is OraclizeI, UsingOracleI {
     function getPrice(string _datasource, uint gaslimit) public returns (uint _dsprice) {
         return 0;
     }
+
     function setProofType(byte _proofType) external {
         revert("Not implemented");
     }
+
     function setCustomGasPrice(uint _gasPrice) external {
         revert("Not implemented");
     }
+
     function randomDS_getSessionPubKeyHash() external view returns(bytes32) {
         revert("Not implemented");
     }

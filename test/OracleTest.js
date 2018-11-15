@@ -11,6 +11,7 @@ contract('Oracle', (accounts) => {
   beforeEach(async () => {
     sut.instance = await Oracle.new(serverAddress);
     sut.usingOracle = await UsingOracle.new(sut.instance.address);
+    await sut.instance.grantAccessToAddress(sut.usingOracle.address);
   });
 
   it('should show server address it trusts', async () => {
@@ -24,6 +25,7 @@ contract('Oracle', (accounts) => {
   it('should emit DataRequested event, when accepting request', async () => {
     // given
     const url = 'someurl.example.com';
+    await sut.instance.grantAccessToAddress(accounts[0]);
 
     // when
     const transaction = await sut.instance.request(url);
