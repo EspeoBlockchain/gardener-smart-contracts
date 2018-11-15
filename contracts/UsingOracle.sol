@@ -7,6 +7,8 @@ contract UsingOracle {
 
     OracleI public oracle;
 
+    mapping(bytes32 => bool) pendingRequests;
+
     event DataRequestedFromOracle(bytes32 id, string url);
     event DataReadFromOracle(bytes32 id, string value, uint errorCode);
 
@@ -16,6 +18,14 @@ contract UsingOracle {
 
     function request(string _url) public {
         bytes32 id = oracle.request(_url);
+        pendingRequests[id] = true;
+
+        emit DataRequestedFromOracle(id, _url);
+    }
+
+    function delayedRequest(string _url, uint _delay) public {
+        bytes32 id = oracle.delayedRequest(_url, _delay);
+        pendingRequests[id] = true;
 
         emit DataRequestedFromOracle(id, _url);
     }
