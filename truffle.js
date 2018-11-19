@@ -25,8 +25,10 @@ module.exports = {
       network_id: '*', // match any network
     },
     ropsten: {
-      // eslint-disable-next-line max-len
-      provider: () => new HDWalletProvider(process.env.PRIVATE_KEY || process.env.MNEMONIC, process.env.ROPSTEN_PROVIDER_URL),
+      provider: () => new HDWalletProvider(
+        process.env.PRIVATE_KEY || process.env.MNEMONIC,
+        process.env.ROPSTEN_PROVIDER_URL,
+      ),
       network_id: '3',
     },
   },
