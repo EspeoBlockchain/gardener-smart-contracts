@@ -3,11 +3,16 @@ This repo is a part of open source oracle project. Initially developed by Espeo 
 
 Table of contents:
 - [Oracle theory](#oracle-theory)
+- [Architecture](#architecture)
 - [Installation](#installation)
 - [Getting started](#getting-started)
+- [FAQ](#faq)
 
 ## Oracle theory
 Oracle is a concept of getting informations from outside blockchain into smart contracts. Basically smart contracts cannot call anything which is outside the blockchain network. That's were oracle idea goes into. Smart contract emits event with needed informations and trusted offchain server, which is listening on that, parses it, gets data from offchain data source and passes it back using it's credentials.
+
+## Architecture
+[Oracle architecture sketch](images/OracleArchitecture.png) 
 
 ## Installation
 Project uses truffle framework and authors assume that you are familiar with. If not please learn from their [documentation](https://truffleframework.com/docs/truffle/overview).
@@ -37,3 +42,16 @@ Contracts explanation:
 When you are ready, you can deploy smart contracts using truffle migrations.
 - `truffle migrate --network development` to deploy to local ganache test blockchain
 - `truffle migrate --network ropsten` to deploy to ethereum testnet
+
+## FAQ
+### What is Oraclize and why we decided to develop our own solution and open sourced that?
+[Oraclize](http://www.oraclize.it/) is currently the most popular oracle solution. They were first and their product offers a wide range of applications.
+Authors found Oraclize solution as very useful and have used it multiple times before. Unfortunately it's SaaS service and every request costs additional fee. 
+Because of that after spending much time in oracles space and get enough knowledge we decided to create our own implementation.
+We strongly believe in blockchain technology, and as in any very young ecosystem any open source project would be very precious.
+It's our gift for this great community and you. Feel free to use, change and contribute. Anytime, anywhere, always for free :)
+### How to migrate from Oraclize solution to this project?
+There are special wrapper called `OraclizeWrapper` which mitigates Oraclize interface and proxies requests to `Oracle`. 
+Authors tried their best to make the migration possible even when someone's project has already used Oraclize. 
+To migrate to this project you need to deploy `OraclizeWrapper`, authorized it in `Oracle` and change address in `OraclizeAddressResolver` to deployed `OraclizeWrapper`. 
+In this way you don't need to change anything in the source code of your contract to switch oracle solution (which is crucial when it's already deployed).
