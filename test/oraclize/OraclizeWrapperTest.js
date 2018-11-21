@@ -12,8 +12,22 @@ contract('OraclizeWrapper', (accounts) => {
     sut.instance = await OraclizeWrapper.new(sut.oracle.address);
   });
 
+  it('should reject query if sender is not authorized', async () => {
+    // given
+    const timestamp = Date.now();
+    const datasource = 'RANDOM';
+    const arg = 'something';
+
+    // when
+    const transaction = sut.instance.query(timestamp, datasource, arg);
+
+    // then
+    return assert.isRejected(transaction);
+  });
+
   it('should reject query if datasource other than URL passed', async () => {
     // given
+    await sut.instance.grantAccessToAddress(accounts[0]);
     const timestamp = Date.now();
     const datasource = 'RANDOM';
     const arg = 'something';
@@ -27,6 +41,7 @@ contract('OraclizeWrapper', (accounts) => {
 
   it('should throw error when query_withGasLimit invoked', async () => {
     // given
+    await sut.instance.grantAccessToAddress(accounts[0]);
     const timestamp = Date.now();
     const datasource = 'URL';
     const arg = 'json(example.com).key1';
@@ -41,6 +56,7 @@ contract('OraclizeWrapper', (accounts) => {
 
   it('should throw error when query2 invoked', async () => {
     // given
+    await sut.instance.grantAccessToAddress(accounts[0]);
     const timestamp = Date.now();
     const datasource = 'URL';
     const arg = 'json(example.com).key1';
@@ -54,6 +70,7 @@ contract('OraclizeWrapper', (accounts) => {
   });
   it('should throw error when query2_withGasLimit invoked', async () => {
     // given
+    await sut.instance.grantAccessToAddress(accounts[0]);
     const timestamp = Date.now();
     const datasource = 'URL';
     const arg = 'json(example.com).key1';
@@ -75,6 +92,7 @@ contract('OraclizeWrapper', (accounts) => {
 
   it('should throw error when queryN invoked', async () => {
     // given
+    await sut.instance.grantAccessToAddress(accounts[0]);
     const timestamp = Date.now();
     const datasource = 'URL';
     const arg = 'json(example.com).key1';
@@ -88,6 +106,7 @@ contract('OraclizeWrapper', (accounts) => {
 
   it('should throw error when queryN_withGasLimit invoked', async () => {
     // given
+    await sut.instance.grantAccessToAddress(accounts[0]);
     const timestamp = Date.now();
     const datasource = 'URL';
     const arg = 'json(example.com).key1';

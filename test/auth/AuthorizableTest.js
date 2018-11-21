@@ -16,7 +16,7 @@ contract('Authorizable', (accounts) => {
     await sut.instance.grantAccessToAddress(validatingAccount);
 
     // then
-    const isGranted = await sut.instance.hasRole(validatingAccount, AUTHORIZED_USER_FLAG);
+    const isGranted = await sut.instance.hasRole.call(validatingAccount, AUTHORIZED_USER_FLAG);
     assert.isTrue(isGranted);
   });
 
@@ -28,7 +28,7 @@ contract('Authorizable', (accounts) => {
     await sut.instance.revokeAccessFromAddress(validatingAccount);
 
     // then
-    const isGranted = await sut.instance.hasRole(validatingAccount, AUTHORIZED_USER_FLAG);
+    const isGranted = await sut.instance.hasRole.call(validatingAccount, AUTHORIZED_USER_FLAG);
     assert.isFalse(isGranted);
   });
 });
