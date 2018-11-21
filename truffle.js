@@ -1,3 +1,5 @@
+const HDWalletProvider = require('truffle-hdwallet-provider');
+require('dotenv').config();
 /*
 § * NB: since truffle-hdwallet-provider 0.0.5 you must wrap HDWallet providers in a
  * function when declaring them. Failure to do so will cause commands to hang. ex:
@@ -12,6 +14,7 @@
  *   },
  */
 
+
 module.exports = {
   // See <http://truffleframework.com/docs/advanced/configuration>
   // to customize your Truffle configuration!
@@ -20,6 +23,13 @@ module.exports = {
       host: '127.0.0.1',
       port: 8545,
       network_id: '*', // match any network
+    },
+    ropsten: {
+      provider: () => new HDWalletProvider(
+        process.env.PRIVATE_KEY || process.env.MNEMONIC,
+        process.env.ROPSTEN_PROVIDER_URL,
+      ),
+      network_id: '3',
     },
   },
 };
