@@ -43,6 +43,13 @@ When you are ready, you can deploy smart contracts using truffle migrations.
 - `truffle migrate --network development` to deploy to local ganache test blockchain
 - `truffle migrate --network ropsten` to deploy to ethereum testnet
 
+## Commands
+We strongly recommend you to run `npx`.
+
+Some of avialable commands:
+- `npx soldity-coverage` - coverage for smart contracts
+- `npx truffle-flattener contracts/...` - contract flattening for etherscan verification
+
 ## FAQ
 ### What is Oraclize and why we decided to develop our own solution and open sourced that?
 [Oraclize](http://www.oraclize.it/) is currently the most popular oracle solution. They were first and their product offers a wide range of applications.
