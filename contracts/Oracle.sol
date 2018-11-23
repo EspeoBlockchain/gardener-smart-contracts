@@ -29,7 +29,7 @@ contract Oracle is Authorizable {
         trustedServer = _trustedServer;
     }
 
-    function request(string _url) public onlyRole(AUTHORIZED_USER) returns(bytes32 id) {
+    function request(string _url) public onlyRole(AUTHORIZED_ROLE) returns(bytes32 id) {
         id = keccak256(abi.encodePacked(_url, msg.sender, now));
         pendingRequests[id].requestAddress = msg.sender;
         pendingRequests[id].validFrom = now;

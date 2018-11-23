@@ -20,8 +20,18 @@ contract('UsingOraclizeExampleContract', (accounts) => {
     sut.instance = await UsingOraclizeExampleContract.new(sut.oar.address);
   });
 
+  it('should reject request from contract which isn\'t authorized in OraclizeWrapper', async () => {
+    // when
+    const transaction = sut.instance.updatePrice();
+
+    // then
+    return assert.isRejected(transaction);
+  });
 
   it('should emit event that query was sent', async () => {
+    // given
+    await sut.wrapper.grantAccessToAddress(sut.instance.address);
+
     // when
     const transaction = await sut.instance.updatePrice();
     const events = transaction.logs;
@@ -34,6 +44,7 @@ contract('UsingOraclizeExampleContract', (accounts) => {
 
   it('should get answer on it\'s request', async () => {
     // given
+    await sut.wrapper.grantAccessToAddress(sut.instance.address);
     const transaction1 = await sut.instance.updatePrice();
     const { blockNumber } = transaction1.receipt;
     const events = await getEvents(
@@ -59,6 +70,7 @@ contract('UsingOraclizeExampleContract', (accounts) => {
 
   it('should reject answer from address other than oracle callback', async () => {
     // given
+    await sut.wrapper.grantAccessToAddress(sut.instance.address);
     const transaction1 = await sut.instance.updatePrice();
     const { blockNumber } = transaction1.receipt;
     const events = await getEvents(
