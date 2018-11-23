@@ -24,18 +24,18 @@ contract OraclizeWrapper is OraclizeI, UsingOracleI, Authorizable {
         UsingOraclizeI(callbackAddress).__callback(_id, _value);
     }
 
-    function query(uint _timestamp, string _datasource, string _arg) external payable onlyRole(AUTHORIZED_USER) returns (bytes32 _id) {
+    function query(uint _timestamp, string _datasource, string _arg) external payable onlyRole(AUTHORIZED_ROLE) returns (bytes32 _id) {
         require(keccak256(abi.encodePacked(_datasource)) == keccak256(abi.encodePacked("URL")), "Only URL datasource supported");
 
         _id = oracle.request(_arg);
         requests[_id] = msg.sender;
     }
 
-    function query_withGasLimit(uint _timestamp, string _datasource, string _arg, uint _gaslimit) external payable onlyRole(AUTHORIZED_USER) returns (bytes32 _id) {
+    function query_withGasLimit(uint _timestamp, string _datasource, string _arg, uint _gaslimit) external payable onlyRole(AUTHORIZED_ROLE) returns (bytes32 _id) {
         revert("Not implemented");
     }
 
-    function query2(uint _timestamp, string _datasource, string _arg1, string _arg2) public payable onlyRole(AUTHORIZED_USER) returns (bytes32 _id) {
+    function query2(uint _timestamp, string _datasource, string _arg1, string _arg2) public payable onlyRole(AUTHORIZED_ROLE) returns (bytes32 _id) {
         revert("Not implemented");
     }
 
@@ -45,15 +45,15 @@ contract OraclizeWrapper is OraclizeI, UsingOracleI, Authorizable {
         string _arg1,
         string _arg2,
         uint _gaslimit
-    ) external payable onlyRole(AUTHORIZED_USER) returns (bytes32 _id) {
+    ) external payable onlyRole(AUTHORIZED_ROLE) returns (bytes32 _id) {
         revert("Not implemented");
     }
 
-    function queryN(uint _timestamp, string _datasource, bytes _argN) public payable onlyRole(AUTHORIZED_USER) returns (bytes32 _id) {
+    function queryN(uint _timestamp, string _datasource, bytes _argN) public payable onlyRole(AUTHORIZED_ROLE) returns (bytes32 _id) {
         revert("Not implemented");
     }
 
-    function queryN_withGasLimit(uint _timestamp, string _datasource, bytes _argN, uint _gaslimit) external payable onlyRole(AUTHORIZED_USER) returns (bytes32 _id) {
+    function queryN_withGasLimit(uint _timestamp, string _datasource, bytes _argN, uint _gaslimit) external payable onlyRole(AUTHORIZED_ROLE) returns (bytes32 _id) {
         revert("Not implemented");
     }
 
