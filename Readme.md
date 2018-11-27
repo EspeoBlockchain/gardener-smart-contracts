@@ -1,6 +1,7 @@
 # Oracle smart contracts
 
 [![CircleCI](https://circleci.com/gh/espeo/blockchain-oracle-sm.svg?style=shield)](https://circleci.com/gh/espeo/blockchain-oracle-sm)
+[![Coverage Status](https://coveralls.io/repos/github/espeo/blockchain-oracle-sm/badge.svg?branch=feature%2FOSO-43-coveralls)](https://coveralls.io/github/espeo/blockchain-oracle-sm?branch=feature%2FOSO-43-coveralls)
 
 This repo is a part of open source oracle project. Initially developed by Espeo Software. Contains all smart contracts used in the project.
 
