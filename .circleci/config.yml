@@ -3,7 +3,7 @@ jobs:
   build:
     docker:
       - image: circleci/node:10.13
-      
+
     working_directory: ~/repo
 
     steps:
@@ -22,9 +22,15 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-          
-      # check linter    
-      - run: npm run lint  
-      
+
+      # copy env variables
+      - run: cp .env.tpl .env
+
+      # check linter
+      - run: npm run lint
+
       # run tests!
       - run: npm test
+
+      # run coverage
+      - run: npx solidity-coverage && cat coverage/lcov.info | npx coveralls
