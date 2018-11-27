@@ -1,4 +1,7 @@
 # Oracle smart contracts
+
+[![CircleCI](https://circleci.com/gh/espeo/blockchain-oracle-sm.svg?style=shield)](https://circleci.com/gh/espeo/blockchain-oracle-sm)
+
 This repo is a part of open source oracle project. Initially developed by Espeo Software. Contains all smart contracts used in the project.
 
 Table of contents:
