@@ -30,4 +30,4 @@ jobs:
       - run: npm test
 
       # run coverage
-      - run: npx solidity-coverage && cat coverage/lcov.info | coveralls
+      - run: npx solidity-coverage
