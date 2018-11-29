@@ -23,8 +23,8 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
-      # copy env variables
-      - run: cp .env.tpl .env
+      # copy test env variables
+      - run: cp .env.test .env
 
       # check linter
       - run: npm run lint

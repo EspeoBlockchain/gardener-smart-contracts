@@ -85,7 +85,7 @@ contract('StringParser', () => {
     assert.equal(result, '123');
   });
 
-  it('shoud concat two strings', async () => {
+  it('should concat two strings', async () => {
     // given
     const value1 = '123';
     const value2 = '456';
@@ -121,7 +121,7 @@ contract('StringParser', () => {
     assert.isFalse(result);
   });
 
-  it('should return valid occurence of needle in haystack using indexOf method', async () => {
+  it('should return valid occurrence of needle in haystack using indexOf method', async () => {
     // given
     const haystack = '123456';
     const needle = '345';
@@ -133,7 +133,7 @@ contract('StringParser', () => {
     assert.equal(result, 2);
   });
 
-  it('should return -1 when needle match only partially', async () => {
+  it('should return -1 when needle matches only partially', async () => {
     // given
     const haystack = '123456';
     const needle = '346';
@@ -145,7 +145,7 @@ contract('StringParser', () => {
     assert.equal(result, -1);
   });
 
-  it('should return -1 if string occurence not found', async () => {
+  it('should return -1 if needle was not found', async () => {
     // given
     const haystack = '123456';
     const needle = 'x';
