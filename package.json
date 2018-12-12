@@ -1,7 +1,7 @@
 {
-  "name": "oracle-sm",
-  "version": "0.0.1",
-  "description": "Oracle smart contracts for Ethereum network",
+  "name": "gardener-smart-contracts",
+  "version": "0.1.0",
+  "description": "Ethereum smart contracts for Gardener open source oracle project",
   "files": [
     "build",
     "contracts",
@@ -14,14 +14,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/espeo/blockchain-oracle-sm.git"
+    "url": "https://github.com/EspeoBlockchain/gardener-smart-contracts.git"
   },
   "author": "Espeo Blockchain",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/espeo/blockchain-oracle-sm/issues"
+    "url": "https://github.com/EspeoBlockchain/gardener-smart-contracts/issues"
   },
-  "homepage": "https://github.com/espeo/blockchain-oracle-sm",
+  "homepage": "https://github.com/EspeoBlockchain/gardener-smart-contracts",
   "devDependencies": {
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
