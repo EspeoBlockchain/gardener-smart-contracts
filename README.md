@@ -2,6 +2,7 @@
 
 [![CircleCI](https://circleci.com/gh/EspeoBlockchain/gardener-smart-contracts.svg?style=shield)](https://circleci.com/gh/EspeoBlockchain/gardener-smart-contracts)
 [![Coverage Status](https://coveralls.io/repos/github/EspeoBlockchain/gardener-smart-contracts/badge.svg)](https://coveralls.io/github/EspeoBlockchain/gardener-smart-contracts)
+[![](https://img.shields.io/npm/v/gardener-smart-contracts.svg)](https://github.com/EspeoBlockchain/gardener-smart-contracts)
 
 This repo is a part of open source oracle project. Initially developed by Espeo Software. Contains all smart contracts used in the project.
 
