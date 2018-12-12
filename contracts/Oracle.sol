@@ -13,10 +13,13 @@ contract Oracle is Authorizable {
 
     address public trustedServer;
 
-    /* This uint is a date written in unix timestamp as a limit,
-    when delay is bigger then we consider uint as timestamp, otherwise we take delay as a second.
-    Limit date is 2018/01/01 00:00:00.
-    */
+    /**
+     * @dev A unix timestamp (epoch seconds) differentiating delayed requests.
+     *      Delay values greater than LIMIT_DATE are considered timestamps.
+     *      Delay values smaller or equal than LIMIT_DATE are considered delays given in seconds.
+     *      No delay can be bigger than 2 years.
+     *      LIMIT_DATE value is 2018/01/01 00:00:00 GMT.
+     */
     uint constant LIMIT_DATE = 1514764800;
 
     mapping(bytes32 => Request) pendingRequests;
@@ -29,7 +32,7 @@ contract Oracle is Authorizable {
         trustedServer = _trustedServer;
     }
 
-    function request(string _url) public onlyRole(AUTHORIZED_USER) returns(bytes32 id) {
+    function request(string _url) public onlyRole(AUTHORIZED_ROLE) returns(bytes32 id) {
         id = keccak256(abi.encodePacked(_url, msg.sender, now));
         pendingRequests[id].requestAddress = msg.sender;
         pendingRequests[id].validFrom = now;

@@ -2,31 +2,41 @@
   "name": "oracle-sm",
   "version": "0.0.1",
   "description": "Oracle smart contracts for Ethereum network",
-  "main": "truffle-config.js",
-  "directories": {
-    "test": "test"
-  },
+  "files": [
+    "build",
+    "contracts",
+    "images",
+    "test"
+  ],
   "scripts": {
     "lint": "solium --dir contracts && eslint --fix migrations/ test/",
-    "test": "truffle test --network develop",
-    "coverage": "solidity-coverage"
+    "test": "truffle test --network develop"
   },
-  "author": "Krzysztof Wędrowicz",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/espeo/blockchain-oracle-sm.git"
+  },
+  "author": "Espeo Blockchain",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/espeo/blockchain-oracle-sm/issues"
+  },
+  "homepage": "https://github.com/espeo/blockchain-oracle-sm",
   "devDependencies": {
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
+    "coveralls": "^3.0.2",
+    "dotenv": "^6.1.0",
     "eslint": "^5.4.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.14.0",
-    "solidity-coverage": "^0.5.11",
-    "solium": "^1.1.8"
-  },
-  "dependencies": {
-    "dotenv": "^6.1.0",
     "lodash": "^4.17.10",
     "openzeppelin-solidity": "1.12.0",
+    "solidity-coverage": "^0.5.11",
+    "solium": "^1.1.8",
     "truffle": "4.1.14",
+    "truffle-flattener": "^1.2.10",
     "truffle-hdwallet-provider": "^1.0.0-web3one.1"
-  }
+  },
+  "dependencies": {}
 }
