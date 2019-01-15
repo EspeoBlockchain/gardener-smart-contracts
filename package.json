@@ -1,5 +1,5 @@
 {
-  "name": "gardener-smart-contracts",
+  "name": "gardener-ethereum",
   "version": "0.1.0",
   "description": "Ethereum smart contracts for Gardener open source oracle project",
   "files": [
