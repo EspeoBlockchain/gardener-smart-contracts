@@ -4,6 +4,8 @@ const timeController = require('./utils/timeController');
 const Oracle = artifacts.require('Oracle');
 const UsingOracle = artifacts.require('UsingOracle');
 
+const ONE_DAY = 60 * 60 * 24;
+
 contract('Oracle', (accounts) => {
   const sut = {};
   const serverAddress = accounts[1];
@@ -185,10 +187,11 @@ contract('Oracle', (accounts) => {
   it('should emit RequestFullfilled event when fulfill request with valid delay as timestamp', async () => {
     // given
     const url = 'someurl.example.com';
-    const delayAsTimestamp = 1546300800; // 2020/01/01 as unix timestamp.
+    const delayAsTimestamp = timeController.currentTimestamp().add(ONE_DAY);
+
     const transaction = await sut.usingOracle.delayedRequest(url, delayAsTimestamp);
     const { blockNumber } = transaction.receipt;
-    timeController.addDays(100); // Adding 15 months from now.
+    timeController.addDays(1);
     const events = await getEvents(
       sut.instance,
       { eventName: 'DelayedDataRequested', eventArgs: {} },
@@ -210,7 +213,7 @@ contract('Oracle', (accounts) => {
   it('should reject fulfilling request for invalid request delay as timestamp', async () => {
     // given
     const url = 'someurl.example.com';
-    const delayInSeconds = 1577836802;
+    const delayInSeconds = timeController.currentTimestamp().add(ONE_DAY);
     const transaction = await sut.usingOracle.delayedRequest(url, delayInSeconds);
     const { blockNumber } = transaction.receipt;
     const events = await getEvents(
