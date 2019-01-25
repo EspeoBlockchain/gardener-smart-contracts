@@ -32,7 +32,7 @@
     "eslint-plugin-import": "^2.15.0",
     "lodash": "^4.17.11",
     "openzeppelin-solidity": "^2.1.2",
-    "solidity-coverage": "^0.5.11",
+    "solidity-coverage": "https://github.com:rotcivegaf/solidity-coverage.git#5875f5b7bc74d447f3312c9c0e9fc7814b482477",
     "solium": "^1.2.2",
     "truffle": "^5.0.2",
     "truffle-flattener": "^1.2.10",
