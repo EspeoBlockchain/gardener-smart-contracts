@@ -121,8 +121,7 @@ contract('OraclizeWrapper', (accounts) => {
 
   it('should return 0 when check for query price without gas limit', async () => {
     // when
-    // eslint-disable-next-line dot-notation
-    const result = await sut.instance.contract.getPrice['string'].call('URL');
+    const result = await sut.instance.methods['getPrice(string)'].call('URL');
 
     // then
     assert.equal(result, 0);

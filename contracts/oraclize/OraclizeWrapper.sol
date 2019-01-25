@@ -1,4 +1,4 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.3;
 
 import "./OraclizeI.sol";
 import "./UsingOraclizeI.sol";
@@ -17,51 +17,51 @@ contract OraclizeWrapper is OraclizeI, UsingOracleI, Authorizable {
         cbAddress = address(this);
     }
 
-    function __callback(bytes32 _id, string _value, uint _errorCode) external {
+    function __callback(bytes32 _id, string calldata _value, uint _errorCode) external {
         address callbackAddress = requests[_id];
         delete requests[_id];
 
         UsingOraclizeI(callbackAddress).__callback(_id, _value);
     }
 
-    function query(uint _timestamp, string _datasource, string _arg) external payable onlyRole(AUTHORIZED_ROLE) returns (bytes32 _id) {
+    function query(uint _timestamp, string calldata _datasource, string calldata _arg) external payable onlyAuthorized() returns (bytes32 _id) {
         require(keccak256(abi.encodePacked(_datasource)) == keccak256(abi.encodePacked("URL")), "Only URL datasource supported");
 
         _id = oracle.request(_arg);
         requests[_id] = msg.sender;
     }
 
-    function query_withGasLimit(uint _timestamp, string _datasource, string _arg, uint _gaslimit) external payable onlyRole(AUTHORIZED_ROLE) returns (bytes32 _id) {
+    function query_withGasLimit(uint _timestamp, string calldata _datasource, string calldata _arg, uint _gaslimit) external payable onlyAuthorized() returns (bytes32 _id) {
         revert("Not implemented");
     }
 
-    function query2(uint _timestamp, string _datasource, string _arg1, string _arg2) public payable onlyRole(AUTHORIZED_ROLE) returns (bytes32 _id) {
+    function query2(uint _timestamp, string memory _datasource, string memory _arg1, string memory _arg2) public payable onlyAuthorized() returns (bytes32 _id) {
         revert("Not implemented");
     }
 
     function query2_withGasLimit(
         uint _timestamp,
-        string _datasource,
-        string _arg1,
-        string _arg2,
+        string calldata _datasource,
+        string calldata _arg1,
+        string calldata _arg2,
         uint _gaslimit
-    ) external payable onlyRole(AUTHORIZED_ROLE) returns (bytes32 _id) {
+    ) external payable onlyAuthorized() returns (bytes32 _id) {
         revert("Not implemented");
     }
 
-    function queryN(uint _timestamp, string _datasource, bytes _argN) public payable onlyRole(AUTHORIZED_ROLE) returns (bytes32 _id) {
+    function queryN(uint _timestamp, string memory _datasource, bytes memory _argN) public payable onlyAuthorized() returns (bytes32 _id) {
         revert("Not implemented");
     }
 
-    function queryN_withGasLimit(uint _timestamp, string _datasource, bytes _argN, uint _gaslimit) external payable onlyRole(AUTHORIZED_ROLE) returns (bytes32 _id) {
+    function queryN_withGasLimit(uint _timestamp, string calldata _datasource, bytes calldata _argN, uint _gaslimit) external payable onlyAuthorized() returns (bytes32 _id) {
         revert("Not implemented");
     }
 
-    function getPrice(string _datasource) public returns (uint _dsprice) {
+    function getPrice(string memory _datasource) public returns (uint _dsprice) {
         return 0;
     }
 
-    function getPrice(string _datasource, uint gaslimit) public returns (uint _dsprice) {
+    function getPrice(string memory _datasource, uint gaslimit) public returns (uint _dsprice) {
         return 0;
     }
 

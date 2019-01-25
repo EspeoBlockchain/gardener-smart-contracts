@@ -1,17 +1,7 @@
-const { assert, getEvents } = require('./utils');
+const { assert, getRequestIdFromEvent } = require('./utils');
 
 const UsingOracle = artifacts.require('UsingOracle');
 const Oracle = artifacts.require('Oracle');
-
-const getRequestIdFromEvent = async (contract, eventName, blockNumber) => {
-  const events = await getEvents(
-    contract,
-    { eventName, eventArgs: {} },
-    { fromBlock: blockNumber, toBlock: blockNumber },
-  );
-
-  return events[0].id;
-};
 
 
 contract('UsingOracle', (accounts) => {
@@ -56,13 +46,14 @@ contract('UsingOracle', (accounts) => {
 
     // when
     const transaction2 = await sut.oracle.fillRequest(id, '1', 0, { from: serverAddress });
+    const { blockNumber: blockNumber2 } = transaction2.receipt;
 
     // then
-    const events = await getEvents(
-      sut.instance,
-      { eventName: 'DataReadFromOracle', eventArgs: { id } },
-      { fromBlock: transaction2.receipt.blockNumber, toBlock: transaction2.receipt.blockNumber },
-    );
+    const events = (await sut.instance.getPastEvents('DataReadFromOracle', {
+      filter: { id },
+      fromBlock: blockNumber2,
+      toBlock: blockNumber2,
+    })).map(event => event.returnValues);
 
     assert.equal(events.length, 1, 'Wrong number of events');
     assert.equal(events[0].id, id, 'Request id doesn\'t match');

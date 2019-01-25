@@ -1,4 +1,4 @@
-const { assert, getEvents } = require('../utils');
+const { assert, getRequestIdFromEvent, getEvents } = require('../utils');
 
 const UsingOraclizeExampleContract = artifacts.require('UsingOraclizeExampleContract');
 const OraclizeWrapper = artifacts.require('OraclizeWrapper');
@@ -47,20 +47,15 @@ contract('UsingOraclizeExampleContract', (accounts) => {
     await sut.wrapper.grantAccessToAddress(sut.instance.address);
     const transaction1 = await sut.instance.updatePrice();
     const { blockNumber } = transaction1.receipt;
-    const events = await getEvents(
-      sut.oracle,
-      { eventName: 'DataRequested', eventArgs: {} },
-      { fromBlock: blockNumber, toBlock: blockNumber },
-    );
-    const { id } = events[0];
+    const id = await getRequestIdFromEvent(sut.oracle, 'DataRequested', blockNumber);
 
     // when
     const transaction2 = await sut.oracle.fillRequest(id, '1', 0, { from: serverAddress });
     const { blockNumber2 } = transaction2.receipt;
     const events2 = await getEvents(
       sut.instance,
-      { eventName: 'LogPriceUpdated', eventArgs: {} },
-      { fromBlock: blockNumber2, toBlock: blockNumber2 },
+      'LogPriceUpdated',
+      blockNumber2,
     );
 
     // then
@@ -73,12 +68,7 @@ contract('UsingOraclizeExampleContract', (accounts) => {
     await sut.wrapper.grantAccessToAddress(sut.instance.address);
     const transaction1 = await sut.instance.updatePrice();
     const { blockNumber } = transaction1.receipt;
-    const events = await getEvents(
-      sut.oracle,
-      { eventName: 'DataRequested', eventArgs: {} },
-      { fromBlock: blockNumber, toBlock: blockNumber },
-    );
-    const { id } = events[0];
+    const id = await getRequestIdFromEvent(sut.oracle, 'DataRequested', blockNumber);
 
     // when
     // eslint-disable-next-line no-underscore-dangle

@@ -1,18 +1,29 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.3;
 
 import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
-import "openzeppelin-solidity/contracts/access/rbac/RBAC.sol";
+import "openzeppelin-solidity/contracts/access/Roles.sol";
 
 
-contract Authorizable is Ownable, RBAC {
+contract Authorizable is Ownable {
 
-    string public constant AUTHORIZED_ROLE = "authorized_role";
+    using Roles for Roles.Role;
+    Roles.Role private _authorized;
+
 
     function grantAccessToAddress(address _authorizedAddress) public onlyOwner {
-        addRole(_authorizedAddress, AUTHORIZED_ROLE);
+        _authorized.add(_authorizedAddress);
     }
 
     function revokeAccessFromAddress(address _addressToRevoke) public onlyOwner {
-        removeRole(_addressToRevoke, AUTHORIZED_ROLE);
+        _authorized.remove(_addressToRevoke);
+    }
+
+    function isAuthorized(address _checkingAddress) public view returns(bool) {
+        return _authorized.has(_checkingAddress);
+    }
+
+    modifier onlyAuthorized() {
+        require(_authorized.has(msg.sender));
+        _;
     }
 }

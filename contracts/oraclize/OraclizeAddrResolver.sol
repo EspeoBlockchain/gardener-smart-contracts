@@ -1,4 +1,4 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.3;
 
 /*
   Copyright (c) 2015-2016 Oraclize SRL
