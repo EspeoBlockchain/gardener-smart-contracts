@@ -1,5 +1,5 @@
 const OraclizeWrapper = artifacts.require('OraclizeWrapper');
-const Oracle = artifacts.require('Oracle.sol');
+const Oracle = artifacts.require('Oracle');
 
 module.exports = async (deployer) => {
   await deployer.deploy(OraclizeWrapper, Oracle.address);

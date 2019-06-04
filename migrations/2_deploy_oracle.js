@@ -1,4 +1,4 @@
-const Oracle = artifacts.require('Oracle.sol');
+const Oracle = artifacts.require('Oracle');
 
 module.exports = (deployer, network, accounts) => {
   const oracleServerAddress = network === 'develop' ? accounts[9] : process.env.ORACLE_SERVER_ADDRESS;
