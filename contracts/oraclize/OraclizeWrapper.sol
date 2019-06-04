@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+pragma solidity 0.5.9;
 
 import "./OraclizeI.sol";
 import "./UsingOraclizeI.sol";
@@ -31,11 +31,21 @@ contract OraclizeWrapper is OraclizeI, UsingOracleI, Authorizable {
         requests[_id] = msg.sender;
     }
 
-    function query_withGasLimit(uint _timestamp, string calldata _datasource, string calldata _arg, uint _gaslimit) external payable onlyAuthorized() returns (bytes32 _id) {
+    function query_withGasLimit(
+        uint _timestamp,
+        string calldata _datasource,
+        string calldata _arg,
+        uint _gaslimit
+    ) external payable onlyAuthorized() returns (bytes32 _id) {
         revert("Not implemented");
     }
 
-    function query2(uint _timestamp, string memory _datasource, string memory _arg1, string memory _arg2) public payable onlyAuthorized() returns (bytes32 _id) {
+    function query2(
+        uint _timestamp,
+        string memory _datasource,
+        string memory _arg1,
+        string memory _arg2
+    ) public payable onlyAuthorized() returns (bytes32 _id) {
         revert("Not implemented");
     }
 
@@ -53,7 +63,12 @@ contract OraclizeWrapper is OraclizeI, UsingOracleI, Authorizable {
         revert("Not implemented");
     }
 
-    function queryN_withGasLimit(uint _timestamp, string calldata _datasource, bytes calldata _argN, uint _gaslimit) external payable onlyAuthorized() returns (bytes32 _id) {
+    function queryN_withGasLimit(
+        uint _timestamp,
+        string calldata _datasource,
+        bytes calldata _argN,
+        uint _gaslimit
+    ) external payable onlyAuthorized() returns (bytes32 _id) {
         revert("Not implemented");
     }
 

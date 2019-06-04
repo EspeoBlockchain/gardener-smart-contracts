@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+pragma solidity 0.5.9;
 
 import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 import "openzeppelin-solidity/contracts/access/Roles.sol";
@@ -23,7 +23,7 @@ contract Authorizable is Ownable {
     }
 
     modifier onlyAuthorized() {
-        require(_authorized.has(msg.sender));
+        require(_authorized.has(msg.sender), "Only authorized addresses can perform this action");
         _;
     }
 }

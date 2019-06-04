@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+pragma solidity 0.5.9;
 
 library StringParser {
     function toInt(string memory _x) public pure returns(int) {
