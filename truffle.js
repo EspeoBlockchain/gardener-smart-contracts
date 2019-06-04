@@ -19,10 +19,15 @@ module.exports = {
       network_id: '3',
     },
   },
-  solc: {
-    optimizer: {
-      enabled: true,
-      runs: 200,
+  compilers: {
+    solc: {
+      version: '0.5.9',
+      settings: {
+        optimizer: {
+          enabled: true,
+          runs: 200,
+        },
+      },
     },
   },
 };

@@ -4,7 +4,6 @@ const Authorizable = artifacts.require('Authorizable');
 
 contract('Authorizable', (accounts) => {
   const sut = {};
-  const AUTHORIZED_ROLE_FLAG = 'authorized_role';
   const validatingAccount = accounts[0];
 
   beforeEach(async () => {
@@ -16,7 +15,7 @@ contract('Authorizable', (accounts) => {
     await sut.instance.grantAccessToAddress(validatingAccount);
 
     // then
-    const isGranted = await sut.instance.hasRole.call(validatingAccount, AUTHORIZED_ROLE_FLAG);
+    const isGranted = await sut.instance.isAuthorized(validatingAccount);
     assert.isTrue(isGranted);
   });
 
@@ -28,7 +27,7 @@ contract('Authorizable', (accounts) => {
     await sut.instance.revokeAccessFromAddress(validatingAccount);
 
     // then
-    const isGranted = await sut.instance.hasRole.call(validatingAccount, AUTHORIZED_ROLE_FLAG);
+    const isGranted = await sut.instance.isAuthorized(validatingAccount);
     assert.isFalse(isGranted);
   });
 });

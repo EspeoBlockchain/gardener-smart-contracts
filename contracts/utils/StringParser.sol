@@ -1,7 +1,7 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.0;
 
 library StringParser {
-    function toInt(string _x) public pure returns(int) {
+    function toInt(string memory _x) public pure returns(int) {
         bytes memory _xInBytes = bytes(_x);
         if(_xInBytes[0] == "-") {
             uint result = toUint(substring(_x, 1, _xInBytes.length));
@@ -12,7 +12,7 @@ library StringParser {
         return int(toUint(_x));
     }
 
-    function toUint(string _x) public pure returns(uint) {
+    function toUint(string memory _x) public pure returns(uint) {
         uint power = 0;
         uint base = 10;
         uint result = 0;
@@ -26,7 +26,7 @@ library StringParser {
                 require(dotOccurence < 2, "Only one dot can be in string");
                 precision = _xInBytes.length-i;
             } else {
-                uint digit = (uint(_xInBytes[i-1]) - 48);
+                uint digit = (uint8(_xInBytes[i-1]) - 48);
                 require(digit >= 0 && digit <= 9, "Character is not a digit");
                 result += digit * base ** power;
                 power += 1;
@@ -36,7 +36,7 @@ library StringParser {
         return result/base**precision;
     }
 
-    function substring(string _x, uint _startIndex, uint _endIndex) public pure returns(string) {
+    function substring(string memory _x, uint _startIndex, uint _endIndex) public pure returns(string memory) {
         bytes memory _xInBytes = bytes(_x);
         bytes memory result = new bytes(_endIndex-_startIndex);
         for(uint i = _startIndex; i < _endIndex; i++) {
@@ -46,7 +46,7 @@ library StringParser {
         return string(result);
     }
 
-    function concat(string _x, string _y) public pure returns(string) {
+    function concat(string memory _x, string memory _y) public pure returns(string memory) {
         bytes memory _xInBytes = bytes(_x);
         bytes memory _yInBytes = bytes(_y);
         bytes memory result = new bytes(_xInBytes.length + _yInBytes.length);
@@ -62,11 +62,11 @@ library StringParser {
         return string(result);
     }
 
-    function compare(string _x, string _y) public pure returns(bool) {
+    function compare(string memory _x, string memory _y) public pure returns(bool) {
         return keccak256(abi.encodePacked(_x)) == keccak256(abi.encodePacked(_y));
     }
 
-    function indexOf(string _x, string _needle) public pure returns(int) {
+    function indexOf(string memory _x, string memory _needle) public pure returns(int) {
         bytes memory _xInBytes = bytes(_x);
         bytes memory _nInBytes = bytes(_needle);
 

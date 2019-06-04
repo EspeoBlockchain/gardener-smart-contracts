@@ -1,4 +1,4 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.0;
 
 import "./oraclizeAPI.sol";
 
@@ -14,7 +14,7 @@ contract UsingOraclizeExampleContract is usingOraclize {
         OAR = OraclizeAddrResolverI(_oar);
     }
 
-    function __callback(bytes32 myid, string result) public {
+    function __callback(bytes32 myid, string memory result) public {
         require(msg.sender == oraclize_cbAddress(), "Only cbAddress can call __callback method");
         ETHUSD = result;
         emit LogPriceUpdated(result);

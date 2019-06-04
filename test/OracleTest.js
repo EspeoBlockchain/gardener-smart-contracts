@@ -1,10 +1,10 @@
-const { assert, EVMRevert, getEvents } = require('./utils');
+const { assert, EVMRevert, getRequestIdFromEvent } = require('./utils');
 const timeController = require('./utils/timeController');
 
 const Oracle = artifacts.require('Oracle');
 const UsingOracle = artifacts.require('UsingOracle');
 
-const ONE_DAY = 60 * 60 * 24;
+const ONE_DAY = web3.utils.toBN(60 * 60 * 24);
 
 contract('Oracle', (accounts) => {
   const sut = {};
@@ -45,12 +45,7 @@ contract('Oracle', (accounts) => {
     const url = 'someurl.example.com';
     const transaction1 = await sut.usingOracle.request(url);
     const { blockNumber } = transaction1.receipt;
-    const events = await getEvents(
-      sut.instance,
-      { eventName: 'DataRequested', eventArgs: {} },
-      { fromBlock: blockNumber, toBlock: blockNumber },
-    );
-    const { id } = events[0];
+    const id = await getRequestIdFromEvent(sut.instance, 'DataRequested', blockNumber);
 
     // when
     const transaction2 = await sut.instance.fillRequest(id, '1', 0, { from: serverAddress });
@@ -69,12 +64,7 @@ contract('Oracle', (accounts) => {
     const url = 'invalidrequest';
     const transaction1 = await sut.usingOracle.request(url);
     const { blockNumber } = transaction1.receipt;
-    const events = await getEvents(
-      sut.instance,
-      { eventName: 'DataRequested', eventArgs: {} },
-      { fromBlock: blockNumber, toBlock: blockNumber },
-    );
-    const { id } = events[0];
+    const id = await getRequestIdFromEvent(sut.instance, 'DataRequested', blockNumber);
 
     // when
     const transaction2 = await sut.instance.fillRequest(id, '', 1, { from: serverAddress });
@@ -93,12 +83,7 @@ contract('Oracle', (accounts) => {
     const url = 'someurl.example.com';
     const transaction1 = await sut.usingOracle.request(url);
     const { blockNumber } = transaction1.receipt;
-    const events = await getEvents(
-      sut.instance,
-      { eventName: 'DataRequested', eventArgs: {} },
-      { fromBlock: blockNumber, toBlock: blockNumber },
-    );
-    const { id } = events[0];
+    const id = await getRequestIdFromEvent(sut.instance, 'DataRequested', blockNumber);
 
     // when
     const transaction2 = sut.instance.fillRequest(id, '1', 0);
@@ -109,7 +94,7 @@ contract('Oracle', (accounts) => {
 
   it('should reject fulfilling request for request id which doesn\'t exist', async () => {
     // given
-    const randomId = web3.sha3('');
+    const randomId = web3.utils.sha3('random');
 
     // when
     const transaction2 = sut.instance.fillRequest(randomId, '1', 0);
@@ -123,12 +108,7 @@ contract('Oracle', (accounts) => {
     const url = 'someurl.example.com';
     const transaction1 = await sut.usingOracle.request(url);
     const { blockNumber } = transaction1.receipt;
-    const events = await getEvents(
-      sut.instance,
-      { eventName: 'DataRequested', eventArgs: {} },
-      { fromBlock: blockNumber, toBlock: blockNumber },
-    );
-    const { id } = events[0];
+    const id = await getRequestIdFromEvent(sut.instance, 'DataRequested', blockNumber);
     await sut.instance.fillRequest(id, '1', 0, { from: serverAddress });
 
     // when
@@ -144,12 +124,7 @@ contract('Oracle', (accounts) => {
     const delayInSeconds = 900;
     const transaction = await sut.usingOracle.delayedRequest(url, delayInSeconds);
     const { blockNumber } = transaction.receipt;
-    const events = await getEvents(
-      sut.instance,
-      { eventName: 'DelayedDataRequested', eventArgs: {} },
-      { fromBlock: blockNumber, toBlock: blockNumber },
-    );
-    const { id } = events[0];
+    const id = await getRequestIdFromEvent(sut.instance, 'DelayedDataRequested', blockNumber);
     timeController.addSeconds(delayInSeconds);
 
     // when
@@ -170,12 +145,8 @@ contract('Oracle', (accounts) => {
     const transaction = await sut.usingOracle.delayedRequest(url, delayInSeconds);
     const { blockNumber } = transaction.receipt;
     timeController.addSeconds(10);
-    const events = await getEvents(
-      sut.instance,
-      { eventName: 'DelayedDataRequested', eventArgs: {} },
-      { fromBlock: blockNumber, toBlock: blockNumber },
-    );
-    const { id } = events[0];
+    const id = await getRequestIdFromEvent(sut.instance, 'DelayedDataRequested', blockNumber);
+
 
     // when
     const transaction1 = sut.instance.fillRequest(id, '2', 0, { from: serverAddress });
@@ -187,17 +158,12 @@ contract('Oracle', (accounts) => {
   it('should emit RequestFullfilled event when fulfill request with valid delay as timestamp', async () => {
     // given
     const url = 'someurl.example.com';
-    const delayAsTimestamp = timeController.currentTimestamp().add(ONE_DAY);
+    const delayAsTimestamp = (await timeController.currentTimestamp()).add(ONE_DAY);
 
     const transaction = await sut.usingOracle.delayedRequest(url, delayAsTimestamp);
     const { blockNumber } = transaction.receipt;
     timeController.addDays(1);
-    const events = await getEvents(
-      sut.instance,
-      { eventName: 'DelayedDataRequested', eventArgs: {} },
-      { fromBlock: blockNumber, toBlock: blockNumber },
-    );
-    const { id } = events[0];
+    const id = await getRequestIdFromEvent(sut.instance, 'DelayedDataRequested', blockNumber);
 
     // when
     const transaction1 = await sut.instance.fillRequest(id, '2', 0, { from: serverAddress });
@@ -213,15 +179,10 @@ contract('Oracle', (accounts) => {
   it('should reject fulfilling request for invalid request delay as timestamp', async () => {
     // given
     const url = 'someurl.example.com';
-    const delayInSeconds = timeController.currentTimestamp().add(ONE_DAY);
+    const delayInSeconds = (await timeController.currentTimestamp()).add(ONE_DAY);
     const transaction = await sut.usingOracle.delayedRequest(url, delayInSeconds);
     const { blockNumber } = transaction.receipt;
-    const events = await getEvents(
-      sut.instance,
-      { eventName: 'DelayedDataRequested', eventArgs: {} },
-      { fromBlock: blockNumber, toBlock: blockNumber },
-    );
-    const { id } = events[0];
+    const id = await getRequestIdFromEvent(sut.instance, 'DelayedDataRequested', blockNumber);
 
     // when
     const transaction1 = sut.instance.fillRequest(id, '2', 0, { from: serverAddress });
