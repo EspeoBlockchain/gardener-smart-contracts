@@ -1,4 +1,4 @@
-pragma solidity 0.5.9;
+pragma solidity 0.5.8;
 
 interface OracleI {
     function request(string calldata _url) external returns(bytes32 id);
